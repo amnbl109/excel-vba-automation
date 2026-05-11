@@ -2,6 +2,12 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](Overview)
+
+---
+
 ## Overview
 
 This project automates the end-to-end creation of Excel Pivot Tables from raw datasets using a combination of
