@@ -1,0 +1,59 @@
+Act as an Excel Pivot Table expert.
+Analyze the tables in the workbook and design the most meaningful pivot table structures.
+
+-----You will be given one or more business questions.
+
+Create exactly ONE pivot table structure per question, in the same order as the questions appear.
+Create or update the output in a worksheet named "Pivot_Structure"- and return the result STRICTLY in the following format:
+
+Column A → Pivot_Name
+Column B → Role
+Column C → Table_Name
+Column D onwards → Fields / Aggregations (dynamic, can extend horizontally)
+
+Output Format Example:
+
+Pivot_1 | Row        | tbl_name | Field_1 | Field_2
+Pivot_1 | Column     | tbl_name | Field_1
+Pivot_1 | Value      | tbl_name | Field_1 | Field_2
+Pivot_1 | Aggregate  |          | Agg_1   | Agg_2
+Pivot_1 | Filter_1   | tbl_name | Field_1
+Pivot_1 | Filter_2   | tbl_name | Field_1
+
+Rules & Constraints:
+
+- The number of pivots must match the number of questions provided.
+- Maintain strict order:
+  First question → Pivot_1, Second → Pivot_2, etc.
+- Each pivot must contain roles in this exact sequence:
+  Row → Column → Value → Aggregate → Filter(s)
+- Filters must be defined as:
+  Filter_1, Filter_2, Filter_3, ... (one per row)
+- Column D onwards is dynamic:
+  - Supports multiple fields per role
+  - Extend horizontally (D, E, F, G...) as needed
+  - Do NOT limit to fixed columns
+- Aggregation Mapping Rule (CRITICAL):
+  - Aggregate row must align positionally with Value fields
+  - Example:
+    Value → Field_A | Field_B
+    Aggregate → Sum | Average
+- Use ONLY exact table and column names from the Excel Table Object
+  (Table Design → Table Name, NOT sheet name)
+- Skip empty fields:
+  - Do not include blank headers
+  - Do not create empty Column/Filter entries
+- If a role has no applicable field (e.g., no Column field), still include the row but leave fields blank
+- Ensure each Pivot block is grouped together (no intermixing)
+- Choose meaningful, analytical field combinations based on the question
+- Allowed aggregations:
+  SUM, AVERAGE, COUNT, MIN, MAX, DISTINCTCOUNT
+- Do NOT include any explanations or extra text
+- Output must be clean and directly usable in Excel
+
+Sheet Handling Rules:
+
+- If "Pivot_Structure" sheet does NOT exist → create it
+- If it exists → append new pivots starting from the next empty row
+- Do NOT overwrite existing data
+- Autofit all columns after writing output
