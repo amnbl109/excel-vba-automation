@@ -22,7 +22,7 @@ This VBA module prepares the workbook for automation.
 - Loads all tables into the Excel Data Model
 - Creates the `Pivot_Structure` sheet
 - Adds a **Pivot Tables** button
-- Assigns the pivot creation macro to the button
+- Assigns the "Create_Multiple_Pivots" macro to the button
 
 ### Output
 - Structured Excel tables
