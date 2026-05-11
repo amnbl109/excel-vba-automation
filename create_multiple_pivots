@@ -1,0 +1,306 @@
+Sub Create_Multiple_Pivots()
+
+    Dim wb As Workbook
+    Dim wsStruct As Worksheet
+    Set wb = ThisWorkbook
+    Set wsStruct = wb.Worksheets("Pivot_Structure")
+    
+    Dim lastRow As Long, lastCol As Long
+    lastRow = wsStruct.Cells(wsStruct.Rows.Count, "A").End(xlUp).Row
+    lastCol = wsStruct.Cells(1, wsStruct.Columns.Count).End(xlToLeft).Column
+    
+    Dim i As Long, j As Long
+    
+    '-----------------------------------
+    ' FORMAT STRUCTURE SHEET
+    '-----------------------------------
+    With wsStruct
+        .Activate
+        
+        ActiveWindow.FreezePanes = False
+        ActiveWindow.SplitRow = 1
+        ActiveWindow.FreezePanes = True
+        
+        If .AutoFilterMode Then .AutoFilterMode = False
+        .Range(.Cells(1, 1), .Cells(1, lastCol)).AutoFilter
+        
+        .Rows(1).Font.Bold = True
+        .Columns.AutoFit
+    End With
+    
+    '-----------------------------------
+    ' APPLY AGGREGATE VALIDATION
+    '-----------------------------------
+    For i = 2 To lastRow
+        
+        If LCase(Trim(wsStruct.Cells(i, 2).Value)) = "aggregate" Then
+            
+            For j = 4 To lastCol
+                
+                On Error Resume Next
+                wsStruct.Cells(i, j).Validation.Delete
+                On Error GoTo 0
+                
+                wsStruct.Cells(i, j).Validation.Add _
+                    Type:=xlValidateList, _
+                    Formula1:="Sum,Average,Count,Min,Max,DistinctCount"
+                    
+            Next j
+            
+        End If
+        
+    Next i
+    
+    '-----------------------------------
+    ' GET UNIQUE PIVOTS
+    '-----------------------------------
+    Dim dict As Object
+    Set dict = CreateObject("Scripting.Dictionary")
+    
+    Dim pivotName As String
+    
+    For i = 2 To lastRow
+        pivotName = Trim(wsStruct.Cells(i, 1).Value)
+        If pivotName <> "" Then
+            If Not dict.exists(pivotName) Then dict.Add pivotName, 1
+        End If
+    Next i
+    
+    Dim key As Variant
+    
+    '===================================
+    ' LOOP EACH PIVOT
+    '===================================
+    For Each key In dict.Keys
+        
+        ' Delete existing sheet
+        Application.DisplayAlerts = False
+        On Error Resume Next
+        wb.Worksheets(key).Delete
+        On Error GoTo 0
+        Application.DisplayAlerts = True
+        
+        ' Create new sheet
+        Dim wsPivot As Worksheet
+        Set wsPivot = wb.Worksheets.Add
+        wsPivot.Name = key
+        
+        ' Create Pivot (DATA MODEL)
+        Dim pc As PivotCache
+        Dim pt As PivotTable
+        
+        Set pc = wb.PivotCaches.Create( _
+            SourceType:=xlExternal, _
+            SourceData:="ThisWorkbookDataModel")
+        
+        Set pt = pc.CreatePivotTable( _
+            TableDestination:=wsPivot.Range("A3"), _
+            TableName:=key & "_PT")
+        
+        '-----------------------------------
+        ' COLLECTIONS
+        '-----------------------------------
+        Dim rowFields As Collection: Set rowFields = New Collection
+        Dim colFields As Collection: Set colFields = New Collection
+        Dim valFields As Collection: Set valFields = New Collection
+        Dim aggList As Collection: Set aggList = New Collection
+        
+        Dim filterFields As Collection: Set filterFields = New Collection
+        Dim filterValues As Collection: Set filterValues = New Collection
+        
+        Dim role As String, tbl As String
+        Dim fieldValue As String
+        
+        '-----------------------------------
+        ' READ STRUCTURE
+        '-----------------------------------
+        For i = 2 To lastRow
+            
+            If wsStruct.Cells(i, 1).Value = key Then
+                
+                role = LCase(Trim(wsStruct.Cells(i, 2).Value))
+                tbl = Trim(wsStruct.Cells(i, 3).Value)
+                
+                For j = 4 To lastCol
+                    
+                    fieldValue = Trim(wsStruct.Cells(i, j).Value)
+                    
+                    If fieldValue <> "" Then
+                        
+                        If role = "row" Then
+                            rowFields.Add "[" & tbl & "].[" & fieldValue & "]"
+                        
+                        ElseIf role = "column" Then
+                            colFields.Add "[" & tbl & "].[" & fieldValue & "]"
+                        
+                        ElseIf role = "value" Then
+                            valFields.Add "[" & tbl & "].[" & fieldValue & "]"
+                        
+                        ElseIf role = "aggregate" Then
+                            aggList.Add fieldValue
+                        
+                        ElseIf role Like "filter*" Then
+                            
+                            Dim filterField As String
+                            filterField = "[" & tbl & "].[" & fieldValue & "]"
+                            filterFields.Add filterField
+                            
+                            Dim tempValues As Collection
+                            Set tempValues = New Collection
+                            
+                            Dim k As Long
+                            For k = j + 1 To lastCol
+                                If Trim(wsStruct.Cells(i, k).Value) <> "" Then
+                                    tempValues.Add Trim(wsStruct.Cells(i, k).Value)
+                                End If
+                            Next k
+                            
+                            filterValues.Add tempValues
+                            
+                            Exit For
+                        
+                        End If
+                        
+                    End If
+                    
+                Next j
+                
+            End If
+            
+        Next i
+        
+        '-----------------------------------
+        ' BUILD PIVOT
+        '-----------------------------------
+        pt.ManualUpdate = True
+        
+        Dim f As Variant
+        
+        For Each f In rowFields
+            pt.CubeFields(f).Orientation = xlRowField
+        Next f
+        
+        For Each f In colFields
+            pt.CubeFields(f).Orientation = xlColumnField
+        Next f
+        
+        Dim idx As Long
+        Dim aggFunc As XlConsolidationFunction
+        Dim captionPrefix As String
+        
+        For idx = 1 To valFields.Count
+            
+            If idx <= aggList.Count Then
+                Call GetAgg(aggList(idx), aggFunc, captionPrefix)
+            Else
+                Call GetAgg("sum", aggFunc, captionPrefix)
+            End If
+            
+            pt.AddDataField pt.CubeFields.GetMeasure( _
+                valFields(idx), _
+                aggFunc, _
+                captionPrefix & CleanCaption(valFields(idx)))
+                
+        Next idx
+        
+        '-----------------------------------
+        ' FINALIZE PIVOT (CRITICAL)
+        '-----------------------------------
+        pt.ManualUpdate = False
+        pt.RefreshTable
+        DoEvents
+        
+        '-----------------------------------
+        ' APPLY FILTERS
+        '-----------------------------------
+        For idx = 1 To filterFields.Count
+            
+            With pt.CubeFields(filterFields(idx))
+                
+                .Orientation = xlPageField
+                .EnableMultiplePageItems = True
+                
+                Dim pf As PivotField
+                Set pf = .PivotFields(1)
+                
+                ' ?? FORCE LOAD MEMBERS (KEY FIX)
+                Dim dummy As Variant
+                On Error Resume Next
+                dummy = pf.PivotItems.Count
+                On Error GoTo 0
+                
+                Dim valCollection As Collection
+                Set valCollection = filterValues(idx)
+                
+                If valCollection.Count > 0 Then
+                    
+                    Dim arr() As String
+                    ReDim arr(0 To valCollection.Count - 1)
+                    
+                    Dim iArr As Long: iArr = 0
+                    Dim v As Variant
+                    
+                    For Each v In valCollection
+                        arr(iArr) = filterFields(idx) & ".&[" & Trim(v) & "]"
+                        iArr = iArr + 1
+                    Next v
+                    
+                    On Error Resume Next
+                    pf.VisibleItemsList = arr
+                    On Error GoTo 0
+                    
+                End If
+                
+            End With
+            
+        Next idx
+        
+        '-----------------------------------
+        ' TABULAR FORM
+        '-----------------------------------
+        pt.RowAxisLayout xlTabularRow
+		
+		pt.rowFields(1).AutoSort Order:=xlDescending, Field:=pt.DataFields(1).Name
+        
+    Next key
+    
+    MsgBox "All pivots created successfully!", vbInformation
+
+End Sub
+
+
+'-----------------------------------
+' HELPER: AGG FUNCTION
+'-----------------------------------
+Sub GetAgg(ByVal aggText As String, _
+           ByRef aggFunc As XlConsolidationFunction, _
+           ByRef captionPrefix As String)
+
+    Select Case LCase(aggText)
+        Case "sum", ""
+            aggFunc = xlSum: captionPrefix = "Sum of "
+        Case "count"
+            aggFunc = xlCount: captionPrefix = "Count of "
+        Case "average", "avg"
+            aggFunc = xlAverage: captionPrefix = "Average of "
+        Case "min"
+            aggFunc = xlMin: captionPrefix = "Min of "
+        Case "max"
+            aggFunc = xlMax: captionPrefix = "Max of "
+        Case "distinctcount", "distinct count", "dcount"
+            aggFunc = xlDistinctCount: captionPrefix = "Distinct Count of "
+        Case Else
+            aggFunc = xlSum: captionPrefix = "Sum of "
+    End Select
+
+End Sub
+
+
+'-----------------------------------
+' HELPER: CLEAN CAPTION
+'-----------------------------------
+Function CleanCaption(ByVal txt As String) As String
+    txt = Replace(txt, "[", "")
+    txt = Replace(txt, "]", "")
+    CleanCaption = txt
+End Function
