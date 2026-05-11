@@ -2,7 +2,10 @@
 
 ## Overview
 
-This project automates the end-to-end creation of Excel Pivot Tables from raw datasets using a combination of VBA automation, Excel Data Model, and Claude for Excel.
+This project automates the end-to-end creation of Excel Pivot Tables from raw datasets using a combination of
+
+- VBA automation
+- Claude for Excel
 
 The workflow transforms raw worksheet data into structured Excel tables, loads them into the Data Model, generates a dynamic pivot configuration sheet, and automatically creates multiple Pivot Tables with flexible configurations.
 
@@ -61,6 +64,28 @@ Click the **Pivot Tables** button to generate all Pivot Tables automatically.
 - Multiple filter selections
 - Automatic descending sort on the first value field
 - Separate worksheet for every Pivot Table
+
+---
+
+## Supported Aggregation Functions
+
+- Sum
+- Count
+- Average
+- Min
+- Max
+- DistinctCount
+
+## Key Capabilities
+
+- Dynamic pivot configuration
+- Multiple Pivot Table generation
+- Excel Data Model integration
+- AI-assisted Pivot Structure creation
+- Multiple filters support
+- Independent aggregation logic
+- Automated sorting
+- End-to-end reporting automation
 
 ---
 
