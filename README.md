@@ -1,5 +1,7 @@
 # Excel Pivot Automation using VBA + Claude for Excel
 
+---
+
 ## Overview
 
 This project automates the end-to-end creation of Excel Pivot Tables from raw datasets using a combination of
@@ -11,35 +13,33 @@ The workflow transforms raw worksheet data into structured Excel tables, loads t
 
 ---
 
-# Workflow
+## Workflow
 
-## [Step 1 — Run `01_tables_datamodel_button`](01_tables_datamodel_button)
+### [Step 1 — Run `01_tables_datamodel_button`](01_tables_datamodel_button)
 
 This VBA module prepares the workbook for automation.
 
-### Actions Performed
+#### Actions Performed
 - Converts worksheet datasets into Excel Tables
 - Loads all tables into the Excel Data Model
 - Creates the `Pivot_Structure` sheet
 - Adds a **Pivot Tables** button
 - Assigns the "Create_Multiple_Pivots" macro to the button
 
-### Output
+#### Output
 - Structured Excel tables
 - Data Model configured
 - Pivot_Structure sheet generated
 - Pivot execution button ready
 
----
-
-## [Step 2 — Run `02_prompt`](02_prompt)
+### [Step 2 — Run `02_prompt`](02_prompt)
 
 The Claude for Excel prompt reads the worksheet tables and automatically generates the `Pivot_Structure` configuration.
 
-### Purpose
+#### Purpose
 Define the structure and logic required for dynamic Pivot Table generation.
 
-### Output
+#### Output
 A fully populated `Pivot_Structure` sheet containing:
 - Row fields
 - Column fields
@@ -48,13 +48,11 @@ A fully populated `Pivot_Structure` sheet containing:
 - Filters
 - Filter selections
 
----
-
-## [Step 3 — Run `03_create_multiple_pivots`](03_create_multiple_pivots)
+### [Step 3 — Run `03_create_multiple_pivots`](03_create_multiple_pivots)
 
 Click the **Pivot Tables** button to generate all Pivot Tables automatically.
 
-### Features
+#### Features
 - Multiple Pivot Tables
 - Multiple Row fields
 - Multiple Column fields
@@ -65,9 +63,7 @@ Click the **Pivot Tables** button to generate all Pivot Tables automatically.
 - Automatic descending sort on the first value field
 - Separate worksheet for every Pivot Table
 
----
-
-## Supported Aggregation Functions
+### Supported Aggregation Functions
 
 - Sum
 - Count
@@ -76,7 +72,7 @@ Click the **Pivot Tables** button to generate all Pivot Tables automatically.
 - Max
 - DistinctCount
 
-## Key Capabilities
+### Key Capabilities
 
 - Dynamic pivot configuration
 - Multiple Pivot Table generation
@@ -89,7 +85,7 @@ Click the **Pivot Tables** button to generate all Pivot Tables automatically.
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```text
 01_tables_datamodel_button
@@ -109,5 +105,5 @@ Click the **Pivot Tables** button to generate all Pivot Tables automatically.
 ```
 
 ---
-# Pivot_Structure Sample
+## Pivot_Structure Sample
 <img width="1201" height="271" alt="Pivot_Structure" src="https://github.com/user-attachments/assets/587bb34e-8902-44a5-bb0b-0968a30bbe10" />
