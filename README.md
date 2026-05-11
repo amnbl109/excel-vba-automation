@@ -10,7 +10,7 @@ The workflow transforms raw worksheet data into structured Excel tables, loads t
 
 # Workflow
 
-## Step 1 — [Run `01_tables_datamodel_button`](01_tables_datamodel_button)
+## [Step 1 — Run `01_tables_datamodel_button`](01_tables_datamodel_button)
 
 This VBA module prepares the workbook for automation.
 
@@ -29,7 +29,7 @@ This VBA module prepares the workbook for automation.
 
 ---
 
-## Step 2 — [Run `02_prompt`](02_prompt)
+## [Step 2 — Run `02_prompt`](02_prompt)
 
 The Claude for Excel prompt reads the worksheet tables and automatically generates the `Pivot_Structure` configuration.
 
@@ -47,7 +47,7 @@ A fully populated `Pivot_Structure` sheet containing:
 
 ---
 
-## Step 3 — [Run `03_create_multiple_pivots`](03_create_multiple_pivots)
+## [Step 3 — Run `03_create_multiple_pivots`](03_create_multiple_pivots)
 
 Click the **Pivot Tables** button to generate all Pivot Tables automatically.
 
