@@ -6,13 +6,13 @@
 
 - [Overview](#Overview)
 - [Workflow](#Workflow)
-  - [Step 1 — Run 01_tables_datamodel_button](#Step 1 — Run 01_tables_datamodel_button)
-  - [Step 2 — Run 02_prompt](#Step 2 — Run 02_prompt)
-  - [Step 3 — Run 03_create_multiple_pivots](#Step 3 — Run 03_create_multiple_pivots)
-  - [Supported Aggregation Functions](#Supported Aggregation Functions)
-  - [Key Capabilities](#Key Capabilities)
-- [Project Structure](#Project Structure)
-- [Pivot_Structure Sample](#Pivot_Structure Sample)
+  - [Step 1 — Run 01_tables_datamodel_button](#Step-1-—-Run-01_tables_datamodel_button)
+  - [Step 2 — Run 02_prompt](#Step-2-—-Run-02_prompt)
+  - [Step 3 — Run 03_create_multiple_pivots](#Step-3-—-Run-03_create_multiple_pivots)
+  - [Supported Aggregation Functions](#Supported-Aggregation-Functions)
+  - [Key Capabilities](#Key-Capabilities)
+- [Project Structure](#Project-Structure)
+- [Pivot_Structure Sample](#Pivot_Structure-Sample)
 
 ---
 
