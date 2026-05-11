@@ -106,3 +106,8 @@ Click the **Pivot Tables** button to generate all Pivot Tables automatically.
 03_create_multiple_pivots
 │
 └── Dynamic Pivot Table generation engine
+```
+
+---
+# Pivot_Structure Sample
+<img width="1201" height="271" alt="Pivot_Structure" src="https://github.com/user-attachments/assets/587bb34e-8902-44a5-bb0b-0968a30bbe10" />
