@@ -1,4 +1,4 @@
-# Excel Pivot Automation using VBA + Claude for Excel 
+# Excel Pivot Automation using VBA + Claude for Excel
 
 ---
 
