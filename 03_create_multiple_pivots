@@ -1,6 +1,5 @@
 Sub Create_Multiple_Pivots()
 
-
     Dim wb As Workbook
     Dim wsStruct As Worksheet
     Set wb = ThisWorkbook
