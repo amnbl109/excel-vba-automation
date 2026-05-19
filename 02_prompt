@@ -1,7 +1,7 @@
 Act as an Excel Pivot Table expert.
 Analyze the tables in the workbook and design the most meaningful pivot table structures.
 
------You will be given one or more business questions.
+--You will be given one or more business questions.
 
 Create exactly ONE pivot table structure per question, in the same order as the questions appear.
 Create or update the output in a worksheet named "Pivot_Structure"- and return the result STRICTLY in the following format:
