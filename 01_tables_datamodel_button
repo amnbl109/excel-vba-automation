@@ -1,6 +1,5 @@
 Option Explicit
 
-
 Sub Tables_DataModel_Button()
 
     Dim wb As Workbook
